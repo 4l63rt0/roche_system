@@ -1,9 +1,9 @@
 <template>
   <v-container>
-    <v-layout>
+    <v-layout column>
       <v-flex>
         <v-card>
-          <v-avatar>
+          <v-avatar class="mt-2">
             <img :src=image />
           </v-avatar>
           <v-card-title>
@@ -15,18 +15,37 @@
           </v-btn>
         </v-card>
       </v-flex>
-      <v-flex></v-flex>
+      <v-card class="mt-2">
+        <v-card-title> Kids </v-card-title>
+        <listTemplate :info="kids"></listTemplate>
+      </v-card>
+      <v-card class="mt-2">
+        <v-card-title> Routines </v-card-title>
+        <listTemplate :info="routines"></listTemplate>
+      </v-card>
+      <v-card class="mt-2">
+        <v-card-title> Rewards </v-card-title>
+        <listTemplate :info="rewards"></listTemplate>
+      </v-card>
     </v-layout>
   </v-container>
 </template>
 
 <script>
+
+import listTemplate from "@/components/listTemplate.vue";
+
 export default {
+  components: {
+    listTemplate: listTemplate,
+  },
   data() {
     return {
-
       completeName: ( this.$store.state.userFname + " " + this.$store.state.userLname ),
-      image: this.$store.state.userImage
+      image: this.$store.state.userImage,
+      kids: this.$store.getters.userData.kids,
+      routines: this.$store.getters.userData.routines,
+      rewards: this.$store.getters.userData.rewards
     }
   },
   computed: {

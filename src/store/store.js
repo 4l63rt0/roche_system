@@ -14,11 +14,9 @@ export const store = new Vuex.Store({
     userFname: null,
     userLname: null,
     userImage: null,
+    userData: null,
     loading: false,
-    error: null,
-    missingKid: null,
-    missingRoutine: null,
-    missingReward: null
+    error: null
   },
   mutations: {
     setUser(state, payload) {
@@ -28,6 +26,9 @@ export const store = new Vuex.Store({
       state.userLname = payload.lname,
       state.userImage = payload.image
     },
+    setUserData(state, payload) {
+      state.userData = payload.userData
+    },
     setLoading(state, payload) {
       state.loading = payload
     },
@@ -36,16 +37,12 @@ export const store = new Vuex.Store({
     },
     clearError(state) {
       state.error = null
-    },
-    setMissingInfo(state, payload) {
-      state.missingKid = payload.kids,
-      state.missingRoutine = payload.routines,
-      state.missingReward = payload.rewards
     }
   },
   actions: {
-    testButton () {
+    testButton ({getters}) {
       console.log("test button");
+      console.log(getters.userData);
     },
     createNewDailyRoutine() {
       console.log('Create new daily routine!!!!')
@@ -141,6 +138,15 @@ export const store = new Vuex.Store({
               id: user.user.uid
             }
             commit('setUser', newUser.id)
+            db.collection('user').doc(newUser.id).get()
+            .then( data => {
+              console.log(data.data());
+              const userData = {
+                userData: data.data()
+              }
+              this.commit('setUserData', userData)
+              router.push("/")
+            })
           }
         )
         .catch(
@@ -176,13 +182,7 @@ export const store = new Vuex.Store({
         lname: null,
         image: null
       }
-      const missingInfo = {
-        missingKid: null,
-        missingRoutine: null,
-        missingReward: null
-      }
       commit('setUser', toLogout)
-      commit('setMissingInfo', missingInfo)
       router.push('/')
     },
     checkMissingInfo ({ commit, getters }) {
@@ -203,7 +203,6 @@ export const store = new Vuex.Store({
           if (data.rewards) {
             user.rewards = true
           }
-          commit('setMissingInfo', user)
           console.log('Info checked')
         })
       })
@@ -506,6 +505,9 @@ export const store = new Vuex.Store({
     },
     userImage(state) {
       return state.userImage
+    },
+    userData(state) {
+      return state.userData
     },
     loading(state) {
       return state.loading

@@ -77,7 +77,6 @@ export default {
           { title: "Add Reward", icon: "mdi-plus", route: "/add_reward" },
           { title: "Add Routine", icon: "mdi-plus", route: "/add_routine" },
           { title: "Add Kid", icon: "mdi-plus", route: "/add_kid" },
-          { title: "Update User", icon: "mdi-account-circle", route: "/update_user" },
           { title: "User Profile", icon: "mdi-account-circle", route: "/user_profile" }
         ];
       }
