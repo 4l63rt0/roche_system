@@ -48,9 +48,9 @@ export default {
     return {
       uid: this.$store.state.user,
       email: this.$store.state.userEmail,
-      fname: "",
-      lname: "",
-      image: "",
+      fname: this.$store.state.userFname,
+      lname: this.$store.state.userLname,
+      image: null,
     };
   },
   computed: {
@@ -76,7 +76,7 @@ export default {
         lname: this.lname,
         image: this.image,
       };
-      this.$store.dispatch("createUser", userData);
+      this.$store.dispatch("updateUser", userData);
     },
     onDismissed() {
       this.$store.dispatch("clearError");

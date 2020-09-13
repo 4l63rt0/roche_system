@@ -339,35 +339,44 @@ export const store = new Vuex.Store({
                 console.log(error)
               })
     },
-    createUser({ commit }, payload) {
+    // Update user profile
+    updateUser({ commit }, payload) {
       commit('setLoading', true)
       commit('clearError')
-      const user = {
-        uid: payload.uid,
+      let key
+      // Update user document
+      db.collection('user').doc(payload.uid).set({
         email: payload.email,
         fname: payload.fname,
         lname: payload.lname
-      }
-      let key
-      db.collection('user').doc(payload.uid).set(user)
+      },{merge: true})
         .then(function(docRef) {
           console.log('This is docRef: ',docRef)
           key = payload.uid
           return key
         })
           .then(key => {
+            // Add new image if available
+            if (!payload.image)  {
+              commit('setLoading', false)
+              const newUser = {
+                fname: payload.fname,
+                lname: payload.lname
+              }
+              commit('setUser', newUser)
+              router.push('/')
+            }
             const filename = payload.image.name
             const ext = filename.slice(filename.lastIndexOf('.'))
             return firebase.storage().ref('user/' + key + '/' + key + ext).put(payload.image)
           })
             .then(fileData => {
+              // Get and update the new image URL
               firebase.storage().ref('/'+fileData.ref.fullPath).getDownloadURL()
                 .then((url) =>{
                   const newUser = {
-                    id: user.uid,
-                    email: user.email,
-                    fname: user.fname,
-                    lname: user.lname,
+                    fname: payload.fname,
+                    lname: payload.lname,
                     image: url
                   }
                   commit('setUser', newUser)
@@ -380,7 +389,7 @@ export const store = new Vuex.Store({
             })
               .catch((error) => {
                 commit('setLoading', false)
-                commit('setError', error)
+                // commit('setError', error)
                 console.log(error)
               })
     },
