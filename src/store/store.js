@@ -53,10 +53,13 @@ export const store = new Vuex.Store({
     signUserUp({ commit }, payload) {
       commit('setLoading', true)
       commit('clearError')
+      // Create user identifier and user base document
+      // Add user to Firebase/Authentication 
       firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
         .then(
           user => {
             commit('setLoading', false)
+            // Set user to store.state for future use
             const newUser = {
               id: user.user.uid,
               email: user.user.email
@@ -65,6 +68,7 @@ export const store = new Vuex.Store({
           }
         ).then ( info => {
           console.log(info);
+          // Create object with user uid number and payload information for user base document
           let user = firebase.auth().currentUser;
           const userDocInfo = {
             uid: user.uid,
@@ -72,20 +76,22 @@ export const store = new Vuex.Store({
             fname: payload.fname,
             lname: payload.lname,
           }
-          console.log("This is firebase and payload: ",userDocInfo);
+          // Create user base document with user.uid idintifier
           let key
           db.collection('user').doc(user.uid).set(userDocInfo)
             .then(function(docRef) {
-              console.log('This is docRef: ',docRef)
+              console.log(docRef);
               key = user.uid
               return key
             })
               .then(key => {
+                // Upload user selected image to Firebasse/Storage using user.uid for main folder and user.uid for image name
                 const filename = payload.image.name
                 const ext = filename.slice(filename.lastIndexOf('.'))
                 return firebase.storage().ref('user/' + key + '/' + key + ext).put(payload.image)
               })
                 .then(fileData => {
+                  // Get image URL and update user base document
                   firebase.storage().ref('/'+fileData.ref.fullPath).getDownloadURL()
                     .then((url) =>{
                       const newUser = {
@@ -96,10 +102,12 @@ export const store = new Vuex.Store({
                         image: url
                       }
                       commit('setUser', newUser)
+                      // Update user profile (Firebase/Authentication) information
                       firebase.auth().currentUser.updateProfile({
                         displayName: payload.fname,
                         photoURL: newUser.image
                       })
+                      // Update user document.img with image URL
                       return db.collection('user').doc(key).update({img: url})
                     })
                     .then(
