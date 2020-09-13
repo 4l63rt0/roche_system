@@ -9,12 +9,18 @@
       <v-layout class="justify-center">
         <v-flex class="flex-column" xs12 sm8 md6>
           <span class="display-1">Update User Profile</span>
-          <v-form @submit.prevent="onCreateUser">
-            <v-text-field label="User ID" v-model="uid" disabled></v-text-field>
-            <v-text-field label="Email" v-model="email" disabled></v-text-field>
-            <v-text-field label="First Name" v-model="fname" required></v-text-field>
-            <v-text-field label="Last Name" v-model="lname" required></v-text-field>
-            <uploadPic class="mb-2" v-on:childImage="childImage($event)"></uploadPic>
+          <v-form class="mt-12" @submit.prevent="onCreateUser">
+            <v-flex row xs12>
+              <v-avatar class="mt-2">
+                <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John" />
+              </v-avatar>
+              <uploadPic :myLabel="myLabel" class="mb-2" v-on:childImage="childImage($event)"></uploadPic>
+            </v-flex>
+            <v-flex>
+              <v-text-field label="Email" v-model="email" disabled></v-text-field>
+              <v-text-field label="First Name" v-model="fname" required></v-text-field>
+              <v-text-field label="Last Name" v-model="lname" required></v-text-field>
+            </v-flex>
             <v-flex class="d-flex justify-end">
               <v-btn
                 type="submit"
@@ -51,6 +57,7 @@ export default {
       fname: this.$store.state.userFname,
       lname: this.$store.state.userLname,
       image: null,
+      myLabel: "Change Avatar",
     };
   },
   computed: {
