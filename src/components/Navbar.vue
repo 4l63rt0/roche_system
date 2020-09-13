@@ -21,11 +21,11 @@
     <v-navigation-drawer v-model="drawer" absolute temporary>
       <v-list-item>
         <v-list-item-avatar>
-          <v-img src="https://f0.pngfuel.com/png/1002/560/saitama-clip-art-png-clip-art.png" />
+          <v-img :src=myAvatar />
         </v-list-item-avatar>
 
         <v-list-item-content>
-          <v-list-item-title>{{ fname }}</v-list-item-title>
+          <v-list-item-title>{{ myName }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
 
@@ -53,17 +53,12 @@ export default {
   data() {
     return {
       drawer: false,
+      image: null
     };
   },
   computed: {
     user() {
       return this.$store.getters.user;
-    },
-    fname() {
-      return this.$store.state.userFname;
-    },
-    urlImage() {
-      return this.$store.state.userImage;
     },
     error() {
       return this.$store.getters.error;
@@ -83,7 +78,7 @@ export default {
           { title: "Add Routine", icon: "mdi-plus", route: "/add_routine" },
           { title: "Add Kid", icon: "mdi-plus", route: "/add_kid" },
           { title: "Update User", icon: "mdi-account-circle", route: "/update_user" },
-          { title: "User Profile", icon: "mdi-account-circle", route: "/userProfile" }
+          { title: "User Profile", icon: "mdi-account-circle", route: "/user_profile" }
         ];
       }
       return menuItems;
@@ -94,6 +89,20 @@ export default {
         this.$store.getters.user !== undefined
       );
     },
+    myAvatar () {
+      if (!this.userIsAuthenticated) {
+        return 'https://www.shareicon.net/data/128x128/2016/07/26/802043_man_512x512.png'
+      } else {
+        return this.$store.state.userImage
+      }
+    },
+    myName () {
+      if (!this.userIsAuthenticated) {
+        return "Roche System"
+      } else {
+        return this.$store.state.userFname
+      }
+    }
   },
   methods: {
     onLogout() {

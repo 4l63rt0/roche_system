@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import about from '../views/about.vue'
+import user_profile from '../views/user_profile.vue'
 import update_user from '../views/update_user.vue'
 import add_kid from '../views/add_kid.vue'
 import add_routine from '../views/add_routine.vue'
@@ -24,6 +25,12 @@ const routes = [
     path: '/about',
     name: 'about',
     component: about
+  },
+  {
+    path: '/user_profile',
+    name: 'user_profile',
+    component: user_profile,
+    beforeEnter: AuthGuard
   },
   {
     path: '/update_user',
