@@ -397,30 +397,31 @@ export const store = new Vuex.Store({
       commit('clearError')
       let creatorId = getters.user
       const kid = {
-        fname: payload.fname,
+        name: payload.name,
         lname: payload.lname,
         status: true,
         scoreStatus: false,
         score: 0
       }
+      console.log("This is Kid: ",kid);
       db.collection('user').doc(creatorId).set({
           kids: {
-            [kid.fname]: kid
+            [kid.name]: kid
             }
           },
           {merge: true})
         .then(function() {
         })
           .then(key => {
-            console.log(key)
-            console.log('This is the image nae: ', payload.image.name)
+            console.log("This is Key: ",key)
+            console.log('This is the image name: ', payload.image.name)
             const filename = payload.image.name
             const ext = filename.slice(filename.lastIndexOf('.'))
             return firebase.storage().ref(
               'user/'+
               creatorId +
               '/kids/' +
-              kid.fname + ext).put(payload.image)
+              kid.name + ext).put(payload.image)
           })
             .then(fileData => {
               console.log(fileData.ref.fullPath)
@@ -429,7 +430,7 @@ export const store = new Vuex.Store({
                   console.log('this is url: ',url)
                   return db.collection('user').doc(creatorId).set({
                     kids: {
-                      [kid.fname]: {
+                      [kid.name]: {
                         img: url
                       }
                     }
@@ -452,7 +453,7 @@ export const store = new Vuex.Store({
       let creatorId = getters.user
       const reward = {
         rname: payload.rname,
-        price: payload.price,
+        score: payload.price,
         status: true
       }
       db.collection('user').doc(creatorId).set({

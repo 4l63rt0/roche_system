@@ -22,7 +22,7 @@
             ></v-text-field>
             <v-text-field
             label="First Name"
-            v-model="fname"
+            v-model="name"
             required
             ></v-text-field>
             <v-text-field
@@ -62,7 +62,7 @@ export default {
     return {
       uid: this.$store.state.user,
       parent: ( this.$store.state.userFname + " " + this.$store.state.userLname ),
-      fname: '',
+      name: '',
       lname: '',
       image: '' 
     }
@@ -84,13 +84,11 @@ export default {
     },
     onAddKid () {
       const kidData = {
-        fname: this.fname,
+        name: this.name,
         lname: this.lname,
         image: this.image
       }
-      this.$store.dispatch('addKid', kidData).then(
-      this.$store.dispatch('checkMissingInfo')
-      )
+      this.$store.dispatch('addKid', kidData)
     },
     onDismissed() {
       this.$store.dispatch("clearError");

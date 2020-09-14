@@ -17,15 +17,15 @@
       </v-flex>
       <v-card class="mt-2">
         <v-card-title> Kids </v-card-title>
-        <listTemplate :info="kids"></listTemplate>
+        <listTemplate :info="kids" :address="addressK"></listTemplate>
       </v-card>
       <v-card class="mt-2">
         <v-card-title> Routines </v-card-title>
-        <listTemplate :info="routines"></listTemplate>
+        <listTemplate :info="routines" :address="addressRu"></listTemplate>
       </v-card>
       <v-card class="mt-2">
         <v-card-title> Rewards </v-card-title>
-        <listTemplate :info="rewards"></listTemplate>
+        <listTemplate :info="rewards" :address="addressRe"></listTemplate>
       </v-card>
     </v-layout>
   </v-container>
@@ -45,7 +45,10 @@ export default {
       image: this.$store.state.userImage,
       kids: this.$store.getters.userData.kids,
       routines: this.$store.getters.userData.routines,
-      rewards: this.$store.getters.userData.rewards
+      rewards: this.$store.getters.userData.rewards,
+      addressK: "kid",
+      addressRu: "routine",
+      addressRe: "reward",
     }
   },
   computed: {

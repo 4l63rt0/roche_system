@@ -3,7 +3,7 @@
     <v-container>
       <v-layout class="justify-center">
         <v-flex class="flex-column" xs12 sm8 md6>
-          <span class="display-1">Update Routine</span>
+          <span class="display-1">Update Reward</span>
           <v-form>
             <v-flex row class="ml-2">
               <v-avatar class="mt-2">
@@ -12,18 +12,13 @@
               <uploadPic :myLabel="myLabel" class="mb-2" v-on:childImage="childImage($event)"></uploadPic>
             </v-flex>
             <v-text-field
-            label="Routine Name"
+            label="Reward Name"
             :value=getInfo.name
             ></v-text-field>
             <v-text-field
-            label="Score"
-            :value=getInfo.score
+            label="Price"
+            :value=getInfo.price
             ></v-text-field>
-            <v-select
-              :items="time"
-              label="Select the Hour"
-              :value=getInfo.time
-            ></v-select>
             <v-switch
             label="Enable Routine"
             v-model=getInfo.status
@@ -50,14 +45,10 @@ export default {
     return {
       name: "",
       image: "",
-      score: "",
+      price: "",
       status: "",
-      time: [],
       myLabel: "Change Avatar"
     }
-  },
-  created() {
-    this.time = Array.from(Array(24).keys())
   },
   methods: {
     childImage: function (childImage) {
@@ -66,7 +57,7 @@ export default {
   },
   computed: {
     getInfo() {
-      return this.$store.state.userData["routines"][String(this.$route.params.routine)]
+      return this.$store.state.userData["rewards"][String(this.$route.params.reward)]
     }
   }
 }
