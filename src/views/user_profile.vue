@@ -63,19 +63,6 @@ export default {
     },
   },
   methods: {
-    childImage: function(childImage) {
-      this.image = childImage;
-    },
-    onAddKid () {
-      const kidData = {
-        fname: this.fname,
-        lname: this.lname,
-        image: this.image
-      }
-      this.$store.dispatch('addKid', kidData).then(
-      this.$store.dispatch('checkMissingInfo')
-      )
-    },
     onDismissed() {
       this.$store.dispatch("clearError");
     }
