@@ -23,9 +23,7 @@
               </v-btn>
             </v-list-item-icon>
             <v-list-item-icon>
-              <v-btn icon>
-                <v-icon color="grey">mdi-delete</v-icon>
-              </v-btn>
+              <modal :info=i.name :img=i.img :address=address></modal>
             </v-list-item-icon>
             <v-switch v-model=i.status></v-switch>
           </v-list-item>
@@ -35,10 +33,16 @@
 </template>
 
 <script>
+
+import modal from "@/components/modal.vue"
+
 export default {
+  components: {
+    modal: modal
+  },
   props: [
     "info",
     "address"
-  ],
+  ]
 }
 </script>

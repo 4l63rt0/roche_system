@@ -47,6 +47,25 @@ export const store = new Vuex.Store({
     createNewDailyRoutine() {
       console.log('Create new daily routine!!!!')
     },
+    deleteInfo ({ commit, getters }, payload) {
+      commit('setLoading', true)
+      commit('clearError')
+      console.log(payload);
+      console.log(getters.user);
+      db.collection('user').doc(getters.user).set({ 
+        [payload.address] : {
+          [payload.info]: firebase.firestore.FieldValue.delete()
+        }
+      }, { merge: true })
+      .then(function() {
+        console.log('Delete successful')
+      })
+      .catch((error) => {
+        commit('setLoading', false)
+        commit('setError', error)
+        console.log(error)
+      })
+    },
     signUserUp({ commit }, payload) {
       commit('setLoading', true)
       commit('clearError')
@@ -452,7 +471,7 @@ export const store = new Vuex.Store({
       commit('clearError')
       let creatorId = getters.user
       const reward = {
-        rname: payload.rname,
+        name: payload.name,
         score: payload.price,
         status: true
       }

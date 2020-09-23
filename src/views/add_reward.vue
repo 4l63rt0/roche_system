@@ -78,7 +78,7 @@ export default {
     },
     onAddReward () {
       const rewardData = {
-        rname: this.rname,
+        name: this.rname,
         price: this.price,
         image: this.image
       }

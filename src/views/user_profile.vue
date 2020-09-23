@@ -46,9 +46,9 @@ export default {
       kids: this.$store.getters.userData.kids,
       routines: this.$store.getters.userData.routines,
       rewards: this.$store.getters.userData.rewards,
-      addressK: "kid",
-      addressRu: "routine",
-      addressRe: "reward",
+      addressK: "kids",
+      addressRu: "routines",
+      addressRe: "rewards",
     }
   },
   computed: {

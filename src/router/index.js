@@ -40,21 +40,21 @@ const routes = [
     beforeEnter: AuthGuard
   },
   {
-    path: '/update_kid/:kid',
+    path: '/update_kids/:kid',
     name: 'update_kid',
     component: update_kid,
     beforeEnter: AuthGuard,
     paramas: true
   },
   {
-    path: '/update_routine/:routine',
+    path: '/update_routines/:routine',
     name: 'update_routine',
     component: update_routine,
     beforeEnter: AuthGuard,
     paramas: true
   },
   {
-    path: '/update_reward/:reward',
+    path: '/update_rewards/:reward',
     name: 'update_reward',
     component: update_reward,
     beforeEnter: AuthGuard,
