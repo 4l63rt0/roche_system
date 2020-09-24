@@ -41,6 +41,7 @@ export default {
   },
   data() {
     return {
+      userId: this.$store.state.user,
       completeName: ( this.$store.state.userFname + " " + this.$store.state.userLname ),
       image: this.$store.state.userImage,
       kids: this.$store.getters.userData.kids,

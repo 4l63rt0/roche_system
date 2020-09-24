@@ -52,8 +52,7 @@
 export default {
   data() {
     return {
-      drawer: false,
-      image: null
+      drawer: false
     };
   },
   computed: {
@@ -62,6 +61,9 @@ export default {
     },
     error() {
       return this.$store.getters.error;
+    },
+    loading () {
+      return this.$store.getters.loading
     },
     menuItems() {
       let menuItems = [
@@ -93,7 +95,7 @@ export default {
       if (!this.userIsAuthenticated) {
         return 'https://www.shareicon.net/data/128x128/2016/07/26/802043_man_512x512.png'
       } else {
-        return this.$store.state.userImage
+        return this.$store.getters.userImage
       }
     },
     myName () {

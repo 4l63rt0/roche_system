@@ -40,9 +40,8 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
-    testButton ({getters}) {
+    testButton () {
       console.log("test button");
-      console.log(getters.userData);
     },
     createNewDailyRoutine() {
       console.log('Create new daily routine!!!!')
@@ -151,21 +150,16 @@ export const store = new Vuex.Store({
       commit('clearError')
       firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
         .then(
-          user => {
-            commit('setLoading', false)
+          userData => {
             const newUser = {
-              id: user.user.uid
+              id: userData.user.uid,
+              email: userData.user.email,
+              fname: userData.user.displayName,
+              image: userData.user.photoURL
             }
-            commit('setUser', newUser.id)
-            db.collection('user').doc(newUser.id).get()
-            .then( data => {
-              console.log(data.data());
-              const userData = {
-                userData: data.data()
-              }
-              this.commit('setUserData', userData)
-              router.push("/")
-            })
+            commit('setUser', newUser)
+            commit('setLoading', false)
+            router.push("/")
           }
         )
         .catch(
@@ -202,6 +196,7 @@ export const store = new Vuex.Store({
         image: null
       }
       commit('setUser', toLogout)
+      console.log("Successfuly logged out");
       router.push('/')
     },
     checkMissingInfo ({ commit, getters }) {
@@ -522,6 +517,9 @@ export const store = new Vuex.Store({
   getters: {
     user(state) {
       return state.user
+    },
+    userName(state) {
+      return state.userFname
     },
     userImage(state) {
       return state.userImage
