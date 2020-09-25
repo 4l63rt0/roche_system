@@ -7,12 +7,6 @@
         </v-flex>
       </v-layout>
 
-      <v-layout row v-if="userIsAuthenticated" mb-2>
-        <v-flex xs12 sm6 offset-sm3>
-          <missingInfo @dismissed="onDismissed"></missingInfo>
-        </v-flex>
-      </v-layout>
-
       <v-layout row wrap class="justify-space-around">
 
           <v-flex xs12 sm3 md2>
@@ -117,13 +111,11 @@ import moment from 'moment'
 import db from '@/firebase/init'
 import scoreCard from '@/components/scoreCard.vue'
 import rewardCard from '@/components/rewardCard.vue'
-import missingInfo from '@/components/missingInfo.vue'
 
 export default {
   components: {
     'scoreCard': scoreCard,
     'rewardCard': rewardCard,
-    'missingInfo': missingInfo
   },
   data() {
     return {

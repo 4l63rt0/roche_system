@@ -9,7 +9,7 @@
       <v-layout class="justify-center">
         <v-flex class="flex-column" xs12 sm8 md6>
           <span class="display-1">Add Routine</span>
-          <v-form @submit.prevent="onCreateRoutine">
+          <v-form @submit.prevent="onAddRoutine">
             <v-text-field
             label="Routine Name"
             v-model="name"
@@ -83,15 +83,14 @@ export default {
     childImage: function(childImage) {
       this.image = childImage;
     },
-    onCreateRoutine () {
+    onAddRoutine () {
       const routineData = {
         name: this.name,
         score: this.score,
         time: this.time,
         image: this.image
       }
-      this.$store.dispatch('createRoutine', routineData)
-      this.$store.dispatch('checkMissingInfo')
+      this.$store.dispatch('addRoutine', routineData)
     },
     onDismissed() {
       this.$store.dispatch("clearError");

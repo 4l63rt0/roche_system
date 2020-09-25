@@ -115,7 +115,6 @@ export default {
       this.$store.dispatch("addNewDay");
     },
     onTest() {
-      console.log("This is my Test");
       this.$store.dispatch("testButton")
     },
   },

@@ -9,7 +9,7 @@
       <v-layout>
         <v-flex class="signup container">
           <span class="display-1">Sign In</span>
-          <v-form @submit.prevent="onSignIn">
+          <v-form @submit.prevent="login">
             <v-text-field
               name="email"
               label="eMail"
@@ -25,6 +25,7 @@
               v-model="password"
               type="password"
               required
+              autocomplete="on"
             ></v-text-field>
             <v-flex class="d-flex justify-end">
               <v-btn
@@ -74,8 +75,8 @@ export default {
     },
   },
   methods: {
-    onSignIn() {
-      this.$store.dispatch("signUserIn", {
+    login() {
+      this.$store.dispatch("login", {
         email: this.email,
         password: this.password,
       });

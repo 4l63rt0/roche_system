@@ -6,6 +6,7 @@ import vuetify from './plugins/vuetify'
 import { store } from './store/store'
 import AlertCmp from './components/shared/alert.vue'
 import * as firebase from 'firebase'
+// import { firestorePlugin } from 'vuefire'
 
 Vue.use(VueSkycons)
 Vue.config.productionTip = false

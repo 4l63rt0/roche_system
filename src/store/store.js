@@ -27,7 +27,7 @@ export const store = new Vuex.Store({
       state.userImage = payload.image
     },
     setUserData(state, payload) {
-      state.userData = payload.userData
+      state.userData = payload
     },
     setLoading(state, payload) {
       state.loading = payload
@@ -50,13 +50,16 @@ export const store = new Vuex.Store({
       commit('setLoading', true)
       commit('clearError')
       console.log(payload);
+      console.log(payload.address);
+      console.log(payload.info);
       console.log(getters.user);
       db.collection('user').doc(getters.user).set({ 
         [payload.address] : {
           [payload.info]: firebase.firestore.FieldValue.delete()
         }
-      }, { merge: true })
+      }, {merge: true})
       .then(function() {
+        commit('setLoading', false)
         console.log('Delete successful')
       })
       .catch((error) => {
@@ -145,7 +148,7 @@ export const store = new Vuex.Store({
           }
         )
     },
-    signUserIn({ commit }, payload) {
+    login({ commit }, payload) {
       commit('setLoading', true)
       commit('clearError')
       firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
@@ -158,8 +161,15 @@ export const store = new Vuex.Store({
               image: userData.user.photoURL
             }
             commit('setUser', newUser)
-            commit('setLoading', false)
-            router.push("/")
+            console.log("Loading User Profile...");
+            db.collection("user").doc(newUser.id)
+              .onSnapshot(res => {
+                console.log("This is Res: ",res.data());
+                commit('setUserData', res.data())
+                commit('setLoading', false)
+              })
+            console.log("...User profile loaded");
+            router.push("/user_profile")
           }
         )
         .catch(
@@ -184,6 +194,12 @@ export const store = new Vuex.Store({
           })
         })
       })
+      db.collection("user").doc(payload.uid)
+        .onSnapshot(res => {
+          console.log("This is Res: ",res.data());
+          commit('setUserData', res.data())
+          commit('setLoading', false)
+        })
       
     },
     logout ({ commit }) {
@@ -197,7 +213,7 @@ export const store = new Vuex.Store({
       }
       commit('setUser', toLogout)
       console.log("Successfuly logged out");
-      router.push('/')
+      router.push('/', () => {})
     },
     checkMissingInfo ({ commit, getters }) {
       commit('setLoading', true)
@@ -297,7 +313,7 @@ export const store = new Vuex.Store({
         console.log('Error getting document: ', error);
       });
     },
-    createRoutine({ commit, getters }, payload) {
+    addRoutine({ commit, getters }, payload) {
       commit('setLoading', true)
       commit('clearError')
       console.log("Creator ID: ", getters.user)
@@ -343,7 +359,7 @@ export const store = new Vuex.Store({
                 })
                 .then(
                   commit('setLoading', false),
-                  router.push('/')
+                  router.push('/user_profile')
                 )
             })
               .catch((error) => {
@@ -464,39 +480,36 @@ export const store = new Vuex.Store({
     addReward({ commit, getters }, payload) {
       commit('setLoading', true)
       commit('clearError')
-      let creatorId = getters.user
+      let userId = getters.user
       const reward = {
         name: payload.name,
         score: payload.price,
         status: true
       }
-      db.collection('user').doc(creatorId).set({
+      db.collection('user').doc(userId).set({
           rewards: {
-            [reward.rname]: reward
+            [reward.name]: reward
             }
           },
           {merge: true})
         .then(function() {
         })
           .then(key => {
-            console.log(key)
-            console.log('This is the image name: ', payload.image.name)
+            console.log("This is key: ", key);
             const filename = payload.image.name
             const ext = filename.slice(filename.lastIndexOf('.'))
             return firebase.storage().ref(
               'user/'+
-              creatorId +
+              userId +
               '/rewards/' +
-              reward.rname + ext).put(payload.image)
+              reward.name + ext).put(payload.image)
           })
             .then(fileData => {
-              console.log(fileData.ref.fullPath)
               firebase.storage().ref('/'+fileData.ref.fullPath).getDownloadURL()
                 .then((url) =>{
-                  console.log('this is url: ',url)
-                  return db.collection('user').doc(creatorId).set({
+                  return db.collection('user').doc(userId).set({
                     rewards: {
-                      [reward.rname]: {
+                      [reward.name]: {
                         img: url
                       }
                     }
@@ -504,16 +517,17 @@ export const store = new Vuex.Store({
                 })
                 .then(
                   commit('setLoading', false),
-                  router.push('/')
-                )
-            })
-              .catch((error) => {
-                commit('setLoading', false)
-                commit('setError', error)
-                console.log(error)
-              })
+                  )
+                })
+                .catch((error) => {
+                  commit('setLoading', false)
+                  commit('setError', error)
+                  console.log(error)
+                })
+      router.push('/user_profile')
     },
   },
+  
   getters: {
     user(state) {
       return state.user

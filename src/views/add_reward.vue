@@ -11,13 +11,8 @@
           <span class="display-1">Add Reward</span>
           <v-form @submit.prevent="onAddReward">
             <v-text-field
-            label="User ID"
-            v-model="uid"
-            disabled
-            ></v-text-field>
-            <v-text-field
             label="Reward Name"
-            v-model="rname"
+            v-model="name"
             type="text"
             ></v-text-field>
             <v-text-field
@@ -55,8 +50,7 @@ export default {
   },
   data() {
     return {
-      uid: this.$store.state.user,
-      rname: '',
+      name: '',
       price: '',
       image: '' 
     }
@@ -78,12 +72,11 @@ export default {
     },
     onAddReward () {
       const rewardData = {
-        name: this.rname,
+        name: this.name,
         price: this.price,
         image: this.image
       }
       this.$store.dispatch('addReward', rewardData)
-      this.$store.dispatch('checkMissingInfo')
     },
     onDismissed() {
       this.$store.dispatch("clearError");
