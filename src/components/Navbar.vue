@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-app-bar color="primary" dense dark>
+    <v-app-bar color="primary" dense dark fixed>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>RR System</v-toolbar-title>
       <v-spacer></v-spacer>
