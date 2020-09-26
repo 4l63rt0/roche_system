@@ -16,7 +16,7 @@ export const store = new Vuex.Store({
     userImage: null,
     userData: null,
     loading: false,
-    error: null
+    alert: null
   },
   mutations: {
     setUser(state, payload) {
@@ -32,11 +32,11 @@ export const store = new Vuex.Store({
     setLoading(state, payload) {
       state.loading = payload
     },
-    setError(state, payload) {
-      state.error = payload
+    setAlert(state, payload) {
+      state.alert = payload
     },
-    clearError(state) {
-      state.error = null
+    clearAlert(state) {
+      state.alert = null
     }
   },
   actions: {
@@ -48,7 +48,7 @@ export const store = new Vuex.Store({
     },
     deleteInfo ({ commit, getters }, payload) {
       commit('setLoading', true)
-      commit('clearError')
+      commit('clearAlert')
       console.log(payload);
       console.log(payload.address);
       console.log(payload.info);
@@ -60,17 +60,20 @@ export const store = new Vuex.Store({
       }, {merge: true})
       .then(function() {
         commit('setLoading', false)
+        let payload = { message: 'Delete was successful', alertType: 'info'}
+        commit('setAlert', payload)
         console.log('Delete successful')
       })
       .catch((error) => {
         commit('setLoading', false)
-        commit('setError', error)
+        let payload = { message: error, alertType: 'error'}
+        commit('setAlert', payload)
         console.log(error)
       })
     },
     signUserUp({ commit }, payload) {
       commit('setLoading', true)
-      commit('clearError')
+      commit('clearAlert')
       // Create user identifier and user base document
       // Add user to Firebase/Authentication 
       firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
@@ -135,22 +138,20 @@ export const store = new Vuex.Store({
                 })
                   .catch((error) => {
                     commit('setLoading', false)
-                    commit('setError', error)
+                    commit('setAlert', error)
                     console.log(error)
                   })
           }
         )
-        .catch(
-          error => {
-            commit('setLoading', false)
-            commit('setError', error)
-            console.log(error)
-          }
-        )
+        .catch(error => {
+          commit('setLoading', false)
+          commit('setAlert', error)
+          console.log(error)
+        })
     },
     login({ commit }, payload) {
       commit('setLoading', true)
-      commit('clearError')
+      commit('clearAlert')
       firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
         .then(
           userData => {
@@ -172,13 +173,12 @@ export const store = new Vuex.Store({
             router.push("/user_profile")
           }
         )
-        .catch(
-          error => {
-            commit('setLoading', false)
-            commit('setError', error)
-            console.log(error)
-          }
-        )
+        .catch(error => {
+          commit('setLoading', false)
+          let payload = { message: error, alertType: 'error'}
+          commit('setAlert', payload)
+          console.log(error)
+        })
     },
     autoSignIn ({ commit }, payload) {
       db.collection('user').where('uid', '==', payload.uid).get()
@@ -217,7 +217,7 @@ export const store = new Vuex.Store({
     },
     checkMissingInfo ({ commit, getters }) {
       commit('setLoading', true)
-      commit('clearError')
+      commit('clearAlert')
       let userID = getters.user
       db.collection('user').where('uid', '==', userID).get()
       .then(function(querySnapshot) {
@@ -240,7 +240,7 @@ export const store = new Vuex.Store({
     },
     addNewDay ({ commit, getters }) {
       commit('setLoading', true)
-      commit('clearError')
+      commit('clearAlert')
       let userId = getters.user
       let myDate = moment().format('YYMMDD')
       let kids = {}
@@ -283,13 +283,13 @@ export const store = new Vuex.Store({
           })
           .catch((error) => {
             commit('setLoading', false)
-            commit('setError', error)
+            commit('setAlert', error)
             console.log(error)
           })
     })
     },
-    clearError({ commit }) {
-      commit('clearError')
+    clearAlert({ commit }) {
+      commit('clearAlert')
     },
     loadDailyScores ({ commit }) {
       commit('setLoading', true)
@@ -309,13 +309,13 @@ export const store = new Vuex.Store({
           console.log(self.dailyScore['0'].id)
         })
       })
-      .catch(function(error) {
+      .catch((error) => {
         console.log('Error getting document: ', error);
       });
     },
     addRoutine({ commit, getters }, payload) {
       commit('setLoading', true)
-      commit('clearError')
+      commit('clearAlert')
       console.log("Creator ID: ", getters.user)
       let creatorId = getters.user
       const routine = {
@@ -364,14 +364,14 @@ export const store = new Vuex.Store({
             })
               .catch((error) => {
                 commit('setLoading', false)
-                commit('setError', error)
+                commit('setAlert', error)
                 console.log(error)
               })
     },
     // Update user profile
     updateUser({ commit }, payload) {
       commit('setLoading', true)
-      commit('clearError')
+      commit('clearAlert')
       let key
       // Update user document
       db.collection('user').doc(payload.uid).set({
@@ -418,13 +418,13 @@ export const store = new Vuex.Store({
             })
               .catch((error) => {
                 commit('setLoading', false)
-                // commit('setError', error)
+                commit('setAlert', error)
                 console.log(error)
               })
     },
     addKid({ commit, getters }, payload) {
       commit('setLoading', true)
-      commit('clearError')
+      commit('clearAlert')
       let creatorId = getters.user
       const kid = {
         name: payload.name,
@@ -468,18 +468,18 @@ export const store = new Vuex.Store({
                 })
                 .then(
                   commit('setLoading', false),
-                  router.push('/')
+                  router.push('/user_profile')
                 )
             })
               .catch((error) => {
                 commit('setLoading', false)
-                commit('setError', error)
+                commit('setAlert', error)
                 console.log(error)
               })
     },
     addReward({ commit, getters }, payload) {
       commit('setLoading', true)
-      commit('clearError')
+      commit('clearAlert')
       let userId = getters.user
       const reward = {
         name: payload.name,
@@ -517,11 +517,12 @@ export const store = new Vuex.Store({
                 })
                 .then(
                   commit('setLoading', false),
+                  commit('setAlert', { message: 'Reward added successfully', alertType: 'success'})
                   )
                 })
                 .catch((error) => {
                   commit('setLoading', false)
-                  commit('setError', error)
+                  commit('setAlert', error)
                   console.log(error)
                 })
       router.push('/user_profile')
@@ -529,23 +530,18 @@ export const store = new Vuex.Store({
   },
   
   getters: {
-    user(state) {
-      return state.user
-    },
-    userName(state) {
-      return state.userFname
-    },
-    userImage(state) {
-      return state.userImage
-    },
-    userData(state) {
-      return state.userData
-    },
-    loading(state) {
-      return state.loading
-    },
-    error(state) {
-      return state.error
-    }
+
+    user: state => state.user,
+
+    userName: state => state.userFname,
+
+    userImage: state => state.userImage,
+
+    userData: state => state.userData,
+
+    loading: state => state.loading,
+
+    alert: state => state.alert,
+
   }
 })
