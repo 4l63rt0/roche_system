@@ -1,18 +1,18 @@
 <template>
   <div>
     <v-container>
-      <v-layout row v-if="error">
+      <v-layout row v-if="alert">
         <v-flex xs12 sm6 offset-sm3>
-          <app-alert @dismissed="onDismissed" :text="error.message"></app-alert>
+          <app-alert @dismissed="onDismissed" :text="alert.message" :type="alert.type"></app-alert>
         </v-flex>
       </v-layout>
       <v-layout class="justify-center">
         <v-flex class="flex-column" xs12 sm8 md6>
           <span class="display-1">Update User Profile</span>
-          <v-form class="mt-12" @submit.prevent="onCreateUser">
+          <v-form class="mt-12" @submit.prevent="onUpdateUser">
             <v-flex row xs12>
-              <v-avatar class="mt-2">
-                <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John" />
+              <v-avatar class="mt-2 ml-2">
+                <img :src=uData.img />
               </v-avatar>
               <uploadPic :myLabel="myLabel" class="mb-2" v-on:childImage="childImage($event)"></uploadPic>
             </v-flex>
@@ -34,7 +34,7 @@
                   <v-icon light class="font-italic caption">Loading...</v-icon>
                 </span>
               </v-btn>
-              <v-btn small color="error" to="/">Cancel</v-btn>
+              <v-btn small color="error" to="/user_profile">Cancel</v-btn>
             </v-flex>
           </v-form>
         </v-flex>
@@ -45,6 +45,7 @@
 
 <script>
 import uploadPic from "@/components/uploadPic.vue";
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -53,29 +54,26 @@ export default {
   data() {
     return {
       uid: this.$store.state.user,
-      email: this.$store.state.userEmail,
-      fname: this.$store.state.userFname,
-      lname: this.$store.state.userLname,
+      email: this.$store.getters.userData.email,
+      fname: this.$store.getters.userData.fname,
+      lname: this.$store.getters.userData.lname,
       image: null,
       myLabel: "Change Avatar",
     };
   },
   computed: {
-    user() {
-      return this.$store.getters.user;
-    },
-    error() {
-      return this.$store.getters.error;
-    },
-    loading() {
-      return this.$store.getters.loading;
-    },
+    ...mapGetters ({
+      user: 'user',
+      alert: 'alert',
+      loading: 'loading',
+      uData: 'userData'
+    })
   },
   methods: {
     childImage: function (childImage) {
       this.image = childImage;
     },
-    onCreateUser() {
+    onUpdateUser() {
       const userData = {
         uid: this.uid,
         email: this.email,
@@ -86,7 +84,7 @@ export default {
       this.$store.dispatch("updateUser", userData);
     },
     onDismissed() {
-      this.$store.dispatch("clearError");
+      this.$store.dispatch("clearAlert");
     },
   },
 };

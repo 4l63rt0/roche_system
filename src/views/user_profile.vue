@@ -6,9 +6,8 @@
       </v-flex>
     </v-layout>
     <v-layout column>
-
       <v-card>
-        <v-card-title> User Information</v-card-title>
+        <v-card-title>User Information</v-card-title>
         <v-layout>
           <v-flex>
               <v-list>

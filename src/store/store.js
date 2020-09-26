@@ -379,8 +379,8 @@ export const store = new Vuex.Store({
         fname: payload.fname,
         lname: payload.lname
       },{merge: true})
-        .then(function(docRef) {
-          console.log('This is docRef: ',docRef)
+        .then(function() {
+          console.log('Document successfully written!')
           key = payload.uid
           return key
         })
@@ -388,39 +388,29 @@ export const store = new Vuex.Store({
             // Add new image if available
             if (!payload.image)  {
               commit('setLoading', false)
-              const newUser = {
-                fname: payload.fname,
-                lname: payload.lname
-              }
-              commit('setUser', newUser)
-              router.push('/')
-            }
-            const filename = payload.image.name
-            const ext = filename.slice(filename.lastIndexOf('.'))
-            return firebase.storage().ref('user/' + key + '/' + key + ext).put(payload.image)
-          })
-            .then(fileData => {
-              // Get and update the new image URL
-              firebase.storage().ref('/'+fileData.ref.fullPath).getDownloadURL()
-                .then((url) =>{
-                  const newUser = {
-                    fname: payload.fname,
-                    lname: payload.lname,
-                    image: url
-                  }
-                  commit('setUser', newUser)
-                  return db.collection('user').doc(key).update({img: url})
-                })
-                .then(
-                  commit('setLoading', false),
-                  router.push('/')
-                )
-            })
-              .catch((error) => {
-                commit('setLoading', false)
-                commit('setAlert', error)
-                console.log(error)
+              router.push('/user_profile')
+            } else {
+              const filename = payload.image.name
+              const ext = filename.slice(filename.lastIndexOf('.'))
+              return firebase.storage().ref('user/' + key + '/' + key + ext).put(payload.image)
+              .then(fileData => {
+                // Get and update the new image URL
+                firebase.storage().ref('/'+fileData.ref.fullPath).getDownloadURL()
+                  .then((url) =>{
+                    return db.collection('user').doc(key).update({img: url})
+                  })
+                  .then(
+                    commit('setLoading', false),
+                    router.push('/user_profile')
+                  )
               })
+            }
+          })
+            .catch((error) => {
+              commit('setLoading', false)
+              commit('setAlert', error)
+              console.log(error)
+            })
     },
     addKid({ commit, getters }, payload) {
       commit('setLoading', true)
