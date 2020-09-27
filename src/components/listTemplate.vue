@@ -25,7 +25,10 @@
             <v-list-item-icon>
               <modal :info=i.name :img=i.img :address=address></modal>
             </v-list-item-icon>
-            <v-switch v-model=i.status></v-switch>
+            <v-switch
+              v-model=i.status
+              @change='changeStatus(i.id)'
+            ></v-switch>
           </v-list-item>
         </v-list>
       </v-flex>
@@ -43,6 +46,16 @@ export default {
   props: [
     "info",
     "address"
-  ]
+  ],
+  methods: {
+    changeStatus(id) {
+      let payload = {
+        id: id,
+        address: this.address
+      }
+      console.log(payload);
+      this.$store.dispatch('changeStatus', payload)
+    }
+  }
 }
 </script>

@@ -168,7 +168,7 @@ export const store = new Vuex.Store({
             console.log("Loading User Profile...");
             db.collection("user").doc(newUser.id)
               .onSnapshot(res => {
-                console.log("This is Res: ", res.data());
+                console.log("Live update...", res.data());
                 commit('setUserData', res.data())
                 commit('setLoading', false)
               })
@@ -201,13 +201,9 @@ export const store = new Vuex.Store({
         })
       db.collection("user").doc(payload.uid)
         .onSnapshot(res => {
-          console.log("This is Res: ", res.data());
+          console.log("Real time update: ", res.data());
           commit('setUserData', res.data())
           commit('setLoading', false)
-          commit('setAlert', { 
-            message: 'You are logged as ' + res.data().fname + ' ' + res.data().lname,
-            alertType: 'error'
-          })
         })
 
     },
@@ -428,7 +424,6 @@ export const store = new Vuex.Store({
     updateKid({ commit, getters }, payload) {
       commit('setLoading', true)
       commit('clearAlert')
-      console.log("This is payload from update kid: ", payload);
       let creatorId = getters.user
       const kid = {
         name: payload.name,
@@ -477,6 +472,29 @@ export const store = new Vuex.Store({
                   )
               })
           }
+        })
+        .catch((error) => {
+          commit('setLoading', false)
+          commit('setAlert', error)
+          console.log(error)
+        })
+    },
+    changeStatus({commit, getters}, payload) {
+      commit('setLoading', true)
+      commit('clearAlert')
+      let changeMyStatus = getters.userData[payload.address][payload.id].status
+      db.collection('user').doc(getters.user).set({
+        [payload.address]: {
+          [payload.id]: {
+            status: changeMyStatus
+          }
+        }
+      },
+        { merge: true })
+        .then((res) => {
+          console.log(res);
+          commit('setLoading', false)
+          commit('setAlert', { message: 'Status changed for', alertType: 'info' })
         })
         .catch((error) => {
           commit('setLoading', false)
