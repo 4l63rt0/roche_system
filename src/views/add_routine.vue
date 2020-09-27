@@ -30,8 +30,10 @@
             <uploadPic class="mb-2" v-on:childImage="childImage($event)"></uploadPic>
             <v-flex class="d-flex justify-end">
               <v-btn 
+              @click="$router.push('/')" small color="error mr-1" >Cancel</v-btn>
+              <v-btn 
                 type="submit"
-                small color="primary mr-1" 
+                small color="primary" 
                 :disabled="loading"
                 :loading="loading"
               >Submit
@@ -39,8 +41,6 @@
                   <v-icon light class="font-italic caption">Loading...</v-icon>
                 </span>
               </v-btn>
-              <v-btn 
-              @click="$router.push('/')" small color="error" >Cancel</v-btn>
             </v-flex>
           </v-form>
         </v-flex>

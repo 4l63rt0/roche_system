@@ -201,7 +201,7 @@ export const store = new Vuex.Store({
         })
       db.collection("user").doc(payload.uid)
         .onSnapshot(res => {
-          console.log("Real time update: ", res.data());
+          console.log("Auto Sign In data: ", res.data());
           commit('setUserData', res.data())
           commit('setLoading', false)
         })
@@ -326,6 +326,7 @@ export const store = new Vuex.Store({
       console.log("Creator ID: ", getters.user)
       let creatorId = getters.user
       const routine = {
+        id: payload.name,
         name: payload.name,
         score: Number(payload.score),
         status: true,
@@ -479,6 +480,126 @@ export const store = new Vuex.Store({
           console.log(error)
         })
     },
+    updateRoutine({commit, getters}, payload) {
+      commit('setLoading', true)
+      commit('clearAlert')
+      console.log(getters.user);
+      console.log(payload);
+      let creatorId = getters.user
+      const routine = {
+        name: payload.name,
+        score: payload.score,
+        status: payload.status,
+        time: payload.time
+      }
+      db.collection('user').doc(creatorId).set({
+        routines: {
+          [payload.id]: routine
+        }
+      },
+        { merge: true })
+        .then(key => {
+          console.log("This is undefined key: ", key)
+          if (!payload.image) {
+            commit('setLoading', false)
+            router.push('/user_profile')
+          } else {
+            const filename = payload.image.name
+            const ext = filename.slice(filename.lastIndexOf('.'))
+            return firebase.storage().ref(
+              'user/' +
+              creatorId +
+              '/routine/' +
+              payload.id + ext).put(payload.image)
+              .then(fileData => {
+                console.log(fileData.ref.fullPath)
+                firebase.storage().ref('/' + fileData.ref.fullPath).getDownloadURL()
+                  .then((url) => {
+                    console.log('this is url: ', url)
+                    return db.collection('user').doc(creatorId).set({
+                      routines: {
+                        [payload.id]: {
+                          img: url
+                        }
+                      }
+                    }, { merge: true })
+                  })
+                  .then(
+                    commit('setLoading', false),
+                    commit('setAlert', {
+                      message: 'Routine updated successfully',
+                      alertType: 'info'
+                    }),
+                    router.push('/user_profile')
+                  )
+              })
+          }
+        })
+        .catch((error) => {
+          commit('setLoading', false)
+          commit('setAlert', error)
+          console.log(error)
+        })
+    },
+    updateReward({commit, getters}, payload) {
+      console.log(payload);
+      commit('setLoading', true)
+      commit('clearAlert')
+      let creatorId = getters.user
+      const reward = {
+        name: payload.name,
+        score: payload.score,
+        status: payload.status
+      }
+      db.collection('user').doc(creatorId).set({
+        rewards: {
+          [payload.id]: reward
+        }
+      },
+        { merge: true })
+        .then(key => {
+          console.log("This is undefined key: ", key)
+          if (!payload.image) {
+            commit('setLoading', false)
+            router.push('/user_profile')
+          } else {
+            const filename = payload.image.name
+            const ext = filename.slice(filename.lastIndexOf('.'))
+            return firebase.storage().ref(
+              'user/' +
+              creatorId +
+              '/rewards/' +
+              payload.id + ext).put(payload.image)
+              .then(fileData => {
+                console.log(fileData.ref.fullPath)
+                firebase.storage().ref('/' + fileData.ref.fullPath).getDownloadURL()
+                  .then((url) => {
+                    console.log('this is url: ', url)
+                    return db.collection('user').doc(creatorId).set({
+                      kids: {
+                        [payload.id]: {
+                          img: url
+                        }
+                      }
+                    }, { merge: true })
+                  })
+                  .then(
+                    commit('setLoading', false),
+                    commit('setAlert', {
+                      message: 'Reward updated successfully',
+                      alertType: 'info'
+                    }),
+                    router.push('/user_profile')
+                  )
+              })
+          }
+        })
+        .catch((error) => {
+          commit('setLoading', false)
+          commit('setAlert', error)
+          console.log(error)
+        })
+    },
     changeStatus({commit, getters}, payload) {
       commit('setLoading', true)
       commit('clearAlert')
@@ -563,6 +684,7 @@ export const store = new Vuex.Store({
       commit('clearAlert')
       let userId = getters.user
       const reward = {
+        id: payload.name,
         name: payload.name,
         score: payload.price,
         status: true

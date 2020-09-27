@@ -32,7 +32,10 @@
               label="Last Name"
               v-model="lname"
             ></v-text-field>
-            <v-switch label="Status" v-model="status"></v-switch>
+            <v-switch
+              label="Kid Status"
+              v-model="status"
+            ></v-switch>
             <v-flex class="d-flex justify-end">
               <v-btn type="submit" small color="primary mr-1">Update</v-btn>
               <v-btn small color="error" :to="'/user_profile'">Cancel</v-btn>
@@ -67,10 +70,11 @@ export default {
       user: "user",
       alert: "alert",
       loading: "loading",
-      uData: "userData",
     }),
     getInfo() {
-      return this.$store.state.userData["kids"][String(this.$route.params.id)];
+      return this.$store.state.userData["kids"][
+        String(this.$route.params.id)
+      ];
     },
   },
   methods: {

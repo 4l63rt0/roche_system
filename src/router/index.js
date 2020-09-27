@@ -47,14 +47,14 @@ const routes = [
     paramas: true
   },
   {
-    path: '/update_routines/:routine',
+    path: '/update_routines/:id',
     name: 'update_routine',
     component: update_routine,
     beforeEnter: AuthGuard,
     paramas: true
   },
   {
-    path: '/update_rewards/:reward',
+    path: '/update_rewards/:id',
     name: 'update_reward',
     component: update_reward,
     beforeEnter: AuthGuard,

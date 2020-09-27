@@ -26,12 +26,12 @@
         <v-card-actions>
           <v-spacer></v-spacer>
 
-          <v-btn small color="primary" @click="dialog = false">
-                No, cancel
-          </v-btn>
-
           <v-btn small color="red" class="white--text" @click="deleteInfo">
                 DELETE
+          </v-btn>
+
+          <v-btn small color="primary" @click="dialog = false">
+                No, cancel
           </v-btn>
 
         </v-card-actions>
