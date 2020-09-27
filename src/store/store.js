@@ -21,10 +21,10 @@ export const store = new Vuex.Store({
   mutations: {
     setUser(state, payload) {
       state.user = payload.id,
-      state.userEmail = payload.email,
-      state.userFname = payload.fname,
-      state.userLname = payload.lname,
-      state.userImage = payload.image
+        state.userEmail = payload.email,
+        state.userFname = payload.fname,
+        state.userLname = payload.lname,
+        state.userImage = payload.image
     },
     setUserData(state, payload) {
       state.userData = payload
@@ -40,36 +40,36 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
-    testButton () {
+    testButton() {
       console.log("test button");
     },
     createNewDailyRoutine() {
       console.log('Create new daily routine!!!!')
     },
-    deleteInfo ({ commit, getters }, payload) {
+    deleteInfo({ commit, getters }, payload) {
       commit('setLoading', true)
       commit('clearAlert')
       console.log(payload);
       console.log(payload.address);
       console.log(payload.info);
       console.log(getters.user);
-      db.collection('user').doc(getters.user).set({ 
-        [payload.address] : {
+      db.collection('user').doc(getters.user).set({
+        [payload.address]: {
           [payload.info]: firebase.firestore.FieldValue.delete()
         }
-      }, {merge: true})
-      .then(function() {
-        commit('setLoading', false)
-        let payload = { message: 'Delete was successful', alertType: 'info'}
-        commit('setAlert', payload)
-        console.log('Delete successful')
-      })
-      .catch((error) => {
-        commit('setLoading', false)
-        let payload = { message: error, alertType: 'error'}
-        commit('setAlert', payload)
-        console.log(error)
-      })
+      }, { merge: true })
+        .then(function () {
+          commit('setLoading', false)
+          let deleteAlert = { message: 'Delete was successful', alertType: 'info' }
+          commit('setAlert', deleteAlert)
+          console.log('Delete successful')
+        })
+        .catch((error) => {
+          commit('setLoading', false)
+          let errorAlert = { message: error, alertType: 'error' }
+          commit('setAlert', errorAlert)
+          console.log(error)
+        })
     },
     signUserUp({ commit }, payload) {
       commit('setLoading', true)
@@ -87,7 +87,7 @@ export const store = new Vuex.Store({
             }
             commit('setUser', newUser)
           }
-        ).then ( info => {
+        ).then(info => {
           console.log(info);
           // Create object with user uid number and payload information for user base document
           let user = firebase.auth().currentUser;
@@ -100,52 +100,55 @@ export const store = new Vuex.Store({
           // Create user base document with user.uid idintifier
           let key
           db.collection('user').doc(user.uid).set(userDocInfo)
-            .then(function(docRef) {
+            .then(function (docRef) {
               console.log(docRef);
               key = user.uid
               return key
             })
-              .then(key => {
-                // Upload user selected image to Firebasse/Storage using user.uid for main folder and user.uid for image name
-                const filename = payload.image.name
-                const ext = filename.slice(filename.lastIndexOf('.'))
-                return firebase.storage().ref('user/' + key + '/' + key + ext).put(payload.image)
-              })
-                .then(fileData => {
-                  // Get image URL and update user base document
-                  firebase.storage().ref('/'+fileData.ref.fullPath).getDownloadURL()
-                    .then((url) =>{
-                      const newUser = {
-                        id: user.uid,
-                        email: user.email,
-                        fname: user.fname,
-                        lname: user.lname,
-                        image: url
-                      }
-                      commit('setUser', newUser)
-                      // Update user profile (Firebase/Authentication) information
-                      firebase.auth().currentUser.updateProfile({
-                        displayName: payload.fname,
-                        photoURL: newUser.image
-                      })
-                      // Update user document.img with image URL
-                      return db.collection('user').doc(key).update({img: url})
-                    })
-                    .then(
-                      commit('setLoading', false),
-                      router.push('/')
-                    )
-                })
-                  .catch((error) => {
-                    commit('setLoading', false)
-                    commit('setAlert', error)
-                    console.log(error)
+            .then(key => {
+              // Upload user selected image to Firebasse/Storage using user.uid for main folder and user.uid for image name
+              const filename = payload.image.name
+              const ext = filename.slice(filename.lastIndexOf('.'))
+              return firebase.storage().ref('user/' + key + '/' + key + ext).put(payload.image)
+            })
+            .then(fileData => {
+              // Get image URL and update user base document
+              firebase.storage().ref('/' + fileData.ref.fullPath).getDownloadURL()
+                .then((url) => {
+                  const newUser = {
+                    id: user.uid,
+                    email: user.email,
+                    fname: user.fname,
+                    lname: user.lname,
+                    image: url
+                  }
+                  commit('setUser', newUser)
+                  // Update user profile (Firebase/Authentication) information
+                  firebase.auth().currentUser.updateProfile({
+                    displayName: payload.fname,
+                    photoURL: newUser.image
                   })
-          }
+                  // Update user document.img with image URL
+                  return db.collection('user').doc(key).update({ img: url })
+                })
+                .then(
+                  commit('setLoading', false),
+                  commit('setAlert', { message: 'Welcome to Roche Systems', alertType: 'info' }),
+                  router.push('/')
+                )
+            })
+            .catch((error) => {
+              commit('setLoading', false)
+              let errorAlert = { message: error, alertType: 'error' }
+              commit('setAlert', errorAlert)
+              console.log(error)
+            })
+        }
         )
         .catch(error => {
           commit('setLoading', false)
-          commit('setAlert', error)
+          let errorAlert = { message: error, alertType: 'error' }
+          commit('setAlert', errorAlert)
           console.log(error)
         })
     },
@@ -165,44 +168,50 @@ export const store = new Vuex.Store({
             console.log("Loading User Profile...");
             db.collection("user").doc(newUser.id)
               .onSnapshot(res => {
-                console.log("This is Res: ",res.data());
+                console.log("This is Res: ", res.data());
                 commit('setUserData', res.data())
                 commit('setLoading', false)
               })
             console.log("...User profile loaded");
+            let welcomeAlert = { message: 'Welcome back', alertType: 'info' }
+            commit('setAlert', welcomeAlert)  
             router.push("/user_profile")
           }
         )
         .catch(error => {
           commit('setLoading', false)
-          let payload = { message: error, alertType: 'error'}
+          let payload = { message: error, alertType: 'error' }
           commit('setAlert', payload)
           console.log(error)
         })
     },
-    autoSignIn ({ commit }, payload) {
+    autoSignIn({ commit }, payload) {
       db.collection('user').where('uid', '==', payload.uid).get()
-      .then(function(querySnapshot) {
-        querySnapshot.forEach(function(u) {
-          let user = u.data()
-          commit('setUser', {
-            id: user.uid,
-            email: user.email,
-            fname: user.fname,
-            lname: user.lname,
-            image: user.img
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (u) {
+            let user = u.data()
+            commit('setUser', {
+              id: user.uid,
+              email: user.email,
+              fname: user.fname,
+              lname: user.lname,
+              image: user.img
+            })
           })
         })
-      })
       db.collection("user").doc(payload.uid)
         .onSnapshot(res => {
-          console.log("This is Res: ",res.data());
+          console.log("This is Res: ", res.data());
           commit('setUserData', res.data())
           commit('setLoading', false)
+          commit('setAlert', { 
+            message: 'You are logged as ' + res.data().fname + ' ' + res.data().lname,
+            alertType: 'error'
+          })
         })
-      
+
     },
-    logout ({ commit }) {
+    logout({ commit }) {
       firebase.auth().signOut()
       const toLogout = {
         id: null,
@@ -213,32 +222,34 @@ export const store = new Vuex.Store({
       }
       commit('setUser', toLogout)
       console.log("Successfuly logged out");
-      router.push('/', () => {})
+      let payload = { message: 'Successfully logged out', alertType: 'info' }
+      commit('setAlert', payload)
+      router.push('/')
     },
-    checkMissingInfo ({ commit, getters }) {
+    checkMissingInfo({ commit, getters }) {
       commit('setLoading', true)
       commit('clearAlert')
       let userID = getters.user
       db.collection('user').where('uid', '==', userID).get()
-      .then(function(querySnapshot) {
-        querySnapshot.forEach(function(u) {
-          let data = u.data()
-          let user = {}
-          if (data.kids) {
-            user.kids = true
-          }
-          if (data.routines) {
-            user.routines = true
-          }
-          if (data.rewards) {
-            user.rewards = true
-          }
-          console.log('Info checked')
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (u) {
+            let data = u.data()
+            let user = {}
+            if (data.kids) {
+              user.kids = true
+            }
+            if (data.routines) {
+              user.routines = true
+            }
+            if (data.rewards) {
+              user.rewards = true
+            }
+            console.log('Info checked')
+          })
         })
-      })
-      
+
     },
-    addNewDay ({ commit, getters }) {
+    addNewDay({ commit, getters }) {
       commit('setLoading', true)
       commit('clearAlert')
       let userId = getters.user
@@ -277,41 +288,41 @@ export const store = new Vuex.Store({
             'routines': routines,
             'kids': myValues.data().kids,
             'rewards': myValues.data().rewards
-          },{merge: true})
-            .then(function() {
+          }, { merge: true })
+            .then(function () {
               console.log('Write successful')
-          })
-          .catch((error) => {
-            commit('setLoading', false)
-            commit('setAlert', error)
-            console.log(error)
-          })
-    })
+            })
+            .catch((error) => {
+              commit('setLoading', false)
+              commit('setAlert', error)
+              console.log(error)
+            })
+        })
     },
     clearAlert({ commit }) {
       commit('clearAlert')
     },
-    loadDailyScores ({ commit }) {
+    loadDailyScores({ commit }) {
       commit('setLoading', true)
       // fetch dailyScore document from Firestore
       let myDate = moment().format('YYMMDD')
       var self = this
       db.collection('dailyScore').where('date', '==', myDate).get()
-      .then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
-          // console.log(doc.data())
-          let qDailyScore = doc.data()
-          qDailyScore.id = doc.id
-          self.dailyScore.push(qDailyScore)
-          self.newRoutines = qDailyScore['routine']
-          self.newKids = qDailyScore['kid']
-          console.log('dailyscore')
-          console.log(self.dailyScore['0'].id)
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
+            // console.log(doc.data())
+            let qDailyScore = doc.data()
+            qDailyScore.id = doc.id
+            self.dailyScore.push(qDailyScore)
+            self.newRoutines = qDailyScore['routine']
+            self.newKids = qDailyScore['kid']
+            console.log('dailyscore')
+            console.log(self.dailyScore['0'].id)
+          })
         })
-      })
-      .catch((error) => {
-        console.log('Error getting document: ', error);
-      });
+        .catch((error) => {
+          console.log('Error getting document: ', error);
+        });
     },
     addRoutine({ commit, getters }, payload) {
       commit('setLoading', true)
@@ -326,47 +337,48 @@ export const store = new Vuex.Store({
       }
       console.log(routine)
       db.collection('user').doc(creatorId).set({
-          routines: {
-            [routine.name]: routine
-            }
-          },
-          {merge: true})
-        .then(function() {
+        routines: {
+          [routine.name]: routine
+        }
+      },
+        { merge: true })
+        .then(function () {
           console.log('Write succeeded!')
         })
-          .then(key => {
-            console.log('this is key: ',key)
-            const filename = payload.image.name
-            const ext = filename.slice(filename.lastIndexOf('.'))
-            return firebase.storage().ref(
-              'user/'+
-              creatorId +
-              '/routines/' +
-              routine.name + ext).put(payload.image)
-          })
-            .then(fileData => {
-              console.log(fileData.ref.fullPath)
-              firebase.storage().ref('/'+fileData.ref.fullPath).getDownloadURL()
-                .then((url) =>{
-                  console.log('this is url: ',url)
-                  return db.collection('user').doc(creatorId).set({
-                    routines: {
-                      [routine.name]: {
-                        img: url
-                      }
-                    }
-                  },{ merge: true})
-                })
-                .then(
-                  commit('setLoading', false),
-                  router.push('/user_profile')
-                )
+        .then(key => {
+          console.log('this is key: ', key)
+          const filename = payload.image.name
+          const ext = filename.slice(filename.lastIndexOf('.'))
+          return firebase.storage().ref(
+            'user/' +
+            creatorId +
+            '/routines/' +
+            routine.name + ext).put(payload.image)
+        })
+        .then(fileData => {
+          console.log(fileData.ref.fullPath)
+          firebase.storage().ref('/' + fileData.ref.fullPath).getDownloadURL()
+            .then((url) => {
+              console.log('this is url: ', url)
+              return db.collection('user').doc(creatorId).set({
+                routines: {
+                  [routine.name]: {
+                    img: url
+                  }
+                }
+              }, { merge: true })
             })
-              .catch((error) => {
-                commit('setLoading', false)
-                commit('setAlert', error)
-                console.log(error)
-              })
+            .then(
+              commit('setLoading', false),
+              commit('setAlert', { message: 'Routine added successfully', alertType: 'success' }),
+              router.push('/user_profile')
+            )
+        })
+        .catch((error) => {
+          commit('setLoading', false)
+          commit('setAlert', error)
+          console.log(error)
+        })
     },
     // Update user profile
     updateUser({ commit }, payload) {
@@ -378,94 +390,155 @@ export const store = new Vuex.Store({
         email: payload.email,
         fname: payload.fname,
         lname: payload.lname
-      },{merge: true})
-        .then(function() {
+      }, { merge: true })
+        .then(function () {
           console.log('Document successfully written!')
           key = payload.uid
           return key
         })
-          .then(key => {
-            // Add new image if available
-            if (!payload.image)  {
-              commit('setLoading', false)
-              router.push('/user_profile')
-            } else {
-              const filename = payload.image.name
-              const ext = filename.slice(filename.lastIndexOf('.'))
-              return firebase.storage().ref('user/' + key + '/' + key + ext).put(payload.image)
+        .then(key => {
+          // Add new image if available
+          if (!payload.image) {
+            commit('setLoading', false)
+            router.push('/user_profile')
+          } else {
+            const filename = payload.image.name
+            const ext = filename.slice(filename.lastIndexOf('.'))
+            return firebase.storage().ref('user/' + key + '/' + key + ext).put(payload.image)
               .then(fileData => {
                 // Get and update the new image URL
-                firebase.storage().ref('/'+fileData.ref.fullPath).getDownloadURL()
-                  .then((url) =>{
-                    return db.collection('user').doc(key).update({img: url})
+                firebase.storage().ref('/' + fileData.ref.fullPath).getDownloadURL()
+                  .then((url) => {
+                    return db.collection('user').doc(key).update({ img: url })
                   })
                   .then(
                     commit('setLoading', false),
                     router.push('/user_profile')
                   )
               })
-            }
-          })
-            .catch((error) => {
-              commit('setLoading', false)
-              commit('setAlert', error)
-              console.log(error)
-            })
+          }
+        })
+        .catch((error) => {
+          commit('setLoading', false)
+          commit('setAlert', error)
+          console.log(error)
+        })
+    },
+    // Update kid
+    updateKid({ commit, getters }, payload) {
+      commit('setLoading', true)
+      commit('clearAlert')
+      console.log("This is payload from update kid: ", payload);
+      let creatorId = getters.user
+      const kid = {
+        name: payload.name,
+        lname: payload.lname,
+        status: payload.status
+      }
+      db.collection('user').doc(creatorId).set({
+        kids: {
+          [payload.id]: kid
+        }
+      },
+        { merge: true })
+        .then(key => {
+          console.log("This is undefined key: ", key)
+          if (!payload.image) {
+            commit('setLoading', false)
+            router.push('/user_profile')
+          } else {
+            const filename = payload.image.name
+            const ext = filename.slice(filename.lastIndexOf('.'))
+            return firebase.storage().ref(
+              'user/' +
+              creatorId +
+              '/kids/' +
+              payload.id + ext).put(payload.image)
+              .then(fileData => {
+                console.log(fileData.ref.fullPath)
+                firebase.storage().ref('/' + fileData.ref.fullPath).getDownloadURL()
+                  .then((url) => {
+                    console.log('this is url: ', url)
+                    return db.collection('user').doc(creatorId).set({
+                      kids: {
+                        [payload.id]: {
+                          img: url
+                        }
+                      }
+                    }, { merge: true })
+                  })
+                  .then(
+                    commit('setLoading', false),
+                    commit('setAlert', {
+                      message: 'Kid updated successfully',
+                      alertType: 'info'
+                    }),
+                    router.push('/user_profile')
+                  )
+              })
+          }
+        })
+        .catch((error) => {
+          commit('setLoading', false)
+          commit('setAlert', error)
+          console.log(error)
+        })
     },
     addKid({ commit, getters }, payload) {
       commit('setLoading', true)
       commit('clearAlert')
       let creatorId = getters.user
       const kid = {
+        id: payload.name,
         name: payload.name,
         lname: payload.lname,
         status: true,
         scoreStatus: false,
         score: 0
       }
-      console.log("This is Kid: ",kid);
+      console.log("This is Kid: ", kid);
       db.collection('user').doc(creatorId).set({
-          kids: {
-            [kid.name]: kid
-            }
-          },
-          {merge: true})
-        .then(function() {
+        kids: {
+          [kid.name]: kid
+        }
+      },
+        { merge: true })
+        .then(function () {
         })
-          .then(key => {
-            console.log("This is Key: ",key)
-            console.log('This is the image name: ', payload.image.name)
-            const filename = payload.image.name
-            const ext = filename.slice(filename.lastIndexOf('.'))
-            return firebase.storage().ref(
-              'user/'+
-              creatorId +
-              '/kids/' +
-              kid.name + ext).put(payload.image)
-          })
-            .then(fileData => {
-              console.log(fileData.ref.fullPath)
-              firebase.storage().ref('/'+fileData.ref.fullPath).getDownloadURL()
-                .then((url) =>{
-                  console.log('this is url: ',url)
-                  return db.collection('user').doc(creatorId).set({
-                    kids: {
-                      [kid.name]: {
-                        img: url
-                      }
-                    }
-                  },{ merge: true})
-                })
-                .then(
-                  commit('setLoading', false),
-                  router.push('/user_profile')
-                )
+        .then(key => {
+          console.log("This is Key: ", key)
+          console.log('This is the image name: ', payload.image.name)
+          const filename = payload.image.name
+          const ext = filename.slice(filename.lastIndexOf('.'))
+          return firebase.storage().ref(
+            'user/' +
+            creatorId +
+            '/kids/' +
+            kid.name + ext).put(payload.image)
+        })
+        .then(fileData => {
+          console.log(fileData.ref.fullPath)
+          firebase.storage().ref('/' + fileData.ref.fullPath).getDownloadURL()
+            .then((url) => {
+              console.log('this is url: ', url)
+              return db.collection('user').doc(creatorId).set({
+                kids: {
+                  [kid.name]: {
+                    img: url
+                  }
+                }
+              }, { merge: true })
             })
-              .catch((error) => {
-                commit('setLoading', false)
-                commit('setAlert', error)
-                console.log(error)
-              })
+            .then(
+              commit('setLoading', false),
+              router.push('/user_profile')
+            )
+        })
+        .catch((error) => {
+          commit('setLoading', false)
+          commit('setAlert', error)
+          console.log(error)
+        })
     },
     addReward({ commit, getters }, payload) {
       commit('setLoading', true)
@@ -477,48 +550,48 @@ export const store = new Vuex.Store({
         status: true
       }
       db.collection('user').doc(userId).set({
-          rewards: {
-            [reward.name]: reward
-            }
-          },
-          {merge: true})
-        .then(function() {
+        rewards: {
+          [reward.name]: reward
+        }
+      },
+        { merge: true })
+        .then(function () {
         })
-          .then(key => {
-            console.log("This is key: ", key);
-            const filename = payload.image.name
-            const ext = filename.slice(filename.lastIndexOf('.'))
-            return firebase.storage().ref(
-              'user/'+
-              userId +
-              '/rewards/' +
-              reward.name + ext).put(payload.image)
-          })
-            .then(fileData => {
-              firebase.storage().ref('/'+fileData.ref.fullPath).getDownloadURL()
-                .then((url) =>{
-                  return db.collection('user').doc(userId).set({
-                    rewards: {
-                      [reward.name]: {
-                        img: url
-                      }
-                    }
-                  },{ merge: true})
-                })
-                .then(
-                  commit('setLoading', false),
-                  commit('setAlert', { message: 'Reward added successfully', alertType: 'success'})
-                  )
-                })
-                .catch((error) => {
-                  commit('setLoading', false)
-                  commit('setAlert', error)
-                  console.log(error)
-                })
+        .then(key => {
+          console.log("This is key: ", key);
+          const filename = payload.image.name
+          const ext = filename.slice(filename.lastIndexOf('.'))
+          return firebase.storage().ref(
+            'user/' +
+            userId +
+            '/rewards/' +
+            reward.name + ext).put(payload.image)
+        })
+        .then(fileData => {
+          firebase.storage().ref('/' + fileData.ref.fullPath).getDownloadURL()
+            .then((url) => {
+              return db.collection('user').doc(userId).set({
+                rewards: {
+                  [reward.name]: {
+                    img: url
+                  }
+                }
+              }, { merge: true })
+            })
+            .then(
+              commit('setLoading', false),
+              commit('setAlert', { message: 'Reward added successfully', alertType: 'success' })
+            )
+        })
+        .catch((error) => {
+          commit('setLoading', false)
+          commit('setAlert', error)
+          console.log(error)
+        })
       router.push('/user_profile')
     },
   },
-  
+
   getters: {
 
     user: state => state.user,

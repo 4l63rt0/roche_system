@@ -18,7 +18,7 @@
             </v-list-item-content>
 
             <v-list-item-icon >
-              <v-btn icon :to="'/update_' + address + '/' + i.name">
+              <v-btn icon :to="'/update_' + address + '/' + i.id">
                 <v-icon color="grey" >mdi-pencil</v-icon>
               </v-btn>
             </v-list-item-icon>

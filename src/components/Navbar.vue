@@ -6,11 +6,7 @@
       <v-spacer></v-spacer>
       <v-btn class="mr-2 success" light v-if="userIsAuthenticated" @click="onTest">
         <v-icon left>mdi-run</v-icon>
-        <span small>Test Me!</span>
-      </v-btn>
-      <v-btn class="mr-2 success" light v-if="userIsAuthenticated" @click="onAddNewDay">
-        <v-icon left>mdi-plus</v-icon>
-        <span small>Add Day</span>
+        <span small>Test</span>
       </v-btn>
       <v-btn light v-if="userIsAuthenticated" @click="onLogout">
         <v-icon left>mdi-logout</v-icon>
@@ -95,14 +91,14 @@ export default {
       if (!this.userIsAuthenticated) {
         return 'https://www.shareicon.net/data/128x128/2016/07/26/802043_man_512x512.png'
       } else {
-        return this.$store.getters.userImage
+        return this.$store.state.userImage
       }
     },
     myName () {
       if (!this.userIsAuthenticated) {
         return "Roche System"
       } else {
-        return this.$store.state.userFname
+        return this.$store.state.userFname + ' ' + this.$store.state.userLname 
       }
     }
   },
