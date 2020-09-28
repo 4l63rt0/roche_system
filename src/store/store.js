@@ -96,6 +96,9 @@ export const store = new Vuex.Store({
             email: payload.email,
             fname: payload.fname,
             lname: payload.lname,
+            kids: {},
+            routines: {},
+            rewards: {}
           }
           // Create user base document with user.uid idintifier
           let key

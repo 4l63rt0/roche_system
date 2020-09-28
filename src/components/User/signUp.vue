@@ -1,8 +1,8 @@
 <template>
   <v-container>
-    <v-layout row v-if="error">
+    <v-layout row v-if="alert">
       <v-flex xs12 sm6 offset-sm3>
-        <app-alert @dismissed="onDismissed" :text="error.message"></app-alert>
+        <app-alert @dismissed="onDismissed" :text="alert.message" :type="alert.alertType"></app-alert>
       </v-flex>
     </v-layout>
     <v-layout>
@@ -55,8 +55,7 @@
                 color="primary mr-1"
                 :disabled="loading"
                 :loading="loading"
-              >
-                Sign Up
+              >Sign Up
                 <span slot="loader" class="custom-loader">
                   <v-icon light class="font-italic caption">Loading...</v-icon>
                 </span>
@@ -71,6 +70,7 @@
 
 <script>
 import uploadPic from "@/components/uploadPic.vue";
+import { mapGetters } from 'vuex'
 
 export default {
   components : {
@@ -87,17 +87,13 @@ export default {
     };
   },
   computed: {
+    ...mapGetters({
+      user: "user",
+      alert: "alert",
+      loading: "loading",
+    }),
     comparePasswords() {
       return this.password !== this.confirmPass ? "Password do not match" : "";
-    },
-    user() {
-      return this.$store.getters.user;
-    },
-    error() {
-      return this.$store.getters.error;
-    },
-    loading() {
-      return this.$store.getters.loading;
     },
   },
   watch: {
