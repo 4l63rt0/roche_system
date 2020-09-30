@@ -4,13 +4,11 @@
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>RR System</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn class="mr-2 success" light v-if="userIsAuthenticated" @click="onTest">
-        <v-icon left>mdi-run</v-icon>
-        <span small>Test</span>
+      <v-btn light icon v-if="userIsAuthenticated" @click="onTest">
+        <v-icon left>mdi-test-tube</v-icon>
       </v-btn>
-      <v-btn light v-if="userIsAuthenticated" @click="onLogout">
+      <v-btn light icon v-if="userIsAuthenticated" @click="onLogout">
         <v-icon left>mdi-logout</v-icon>
-        <span small>Logout</span>
       </v-btn>
     </v-app-bar>
 

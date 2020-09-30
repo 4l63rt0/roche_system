@@ -1,11 +1,15 @@
 <template>
   <div>
     <v-container>
-      <v-layout row v-if="error">
-        <v-flex xs12 sm6 offset-sm3>
-          <app-alert @dismissed="onDismissed" :text="error.message"></app-alert>
-        </v-flex>
-      </v-layout>
+      <v-layout row v-if="alert">
+      <v-flex xs12 sm6 offset-sm3>
+        <app-alert
+          @dismissed="onDismissed"
+          :text="alert.message"
+          :type="alert.type"
+        ></app-alert>
+      </v-flex>
+    </v-layout>
 
       <v-layout row wrap class="justify-space-around">
 
@@ -111,6 +115,7 @@ import moment from 'moment'
 import db from '@/firebase/init'
 import scoreCard from '@/components/scoreCard.vue'
 import rewardCard from '@/components/rewardCard.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -205,15 +210,11 @@ export default {
     
   },
   computed: {
-    user () {
-      return this.$store.getters.user
-    },
-    error() {
-      return this.$store.getters.error;
-    },
-    loading () {
-      return this.$store.getters.loading
-    },
+    ...mapGetters({
+      user: "user",
+      alert: "alert",
+      loading: "loading",
+    }),
     userIsAuthenticated() {
       return (
         this.$store.getters.user !== null &&

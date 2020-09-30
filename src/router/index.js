@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import Home2 from '../views/Home2.vue'
 import about from '../views/about.vue'
 import user_profile from '../views/user_profile.vue'
 import update_user from '../views/update_user.vue'
@@ -21,6 +22,11 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home
+  },
+  {
+    path: '/2',
+    name: 'Home2',
+    component: Home2
   },
   {
     path: '/about',
